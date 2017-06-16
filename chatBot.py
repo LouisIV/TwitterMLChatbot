@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 #Quick and dirty twitter chatbot
 #Using tweepy and chatterbot from https://github.com/gunthercox/ChatterBot
 #Author: Blake Oliver <oliver2213@me.com>
@@ -14,10 +12,10 @@ api = tweepy.API(auth) # Get our API object
 #Set up our chat bot:
 chatbot = ChatBot(
     "Terminal",
-    storage_adapter="chatterbot.adapters.storage.JsonDatabaseAdapter",
+    storage_adapter="chatterbot.storage.JsonFileStorageAdapter",
     logic_adapter="chatterbot.adapters.logic.ClosestMeaningAdapter",
-    database="database.db",
-    io_adapter="chatterbot.adapters.io.NoOutputAdapter"
+    database="database.db"
+    #io_adapter="chatterbot.adapters.io.NoOutputAdapter"
     )
 
 class StdOutListener(tweepy.StreamListener):
@@ -51,7 +49,7 @@ E.g: on_connect, on_disconnect, on_status, on_direct_message, etc."""
             if status.direct_message['sender_screen_name'] != self.me.screen_name:
                 print(status.direct_message['sender_screen_name']+": \""+status.direct_message['text']+"\"")
                 response = chatbot.get_response(status.direct_message['text'])
-                print "chat bot response: %s" %(response)
+                print("chat bot response: %s") % (response)
                 api.send_direct_message(user_id =status.direct_message['sender_id'], text =response)
             return True
         except BaseException as e:
@@ -70,7 +68,7 @@ def main():
 
     try:
         me = api.me()
-        print "Starting userstream for %s ( %s )" %(me.name, me.screen_name)
+        print("Starting userstream for %s ( %s )") % (me.name, me.screen_name)
         stream = tweepy.Stream(auth, StdOutListener())
         stream.userstream()
 
